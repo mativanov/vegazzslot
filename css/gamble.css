@@ -1,0 +1,547 @@
+/* ============================================================
+   gamble.css — Post-win Gamble Feature
+   Neon Reels — Underground Casino
+   ============================================================ */
+
+/* ── Overlay ── */
+.gamble-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.93);
+  z-index: 170;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.gamble-overlay--show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ── Panel ── */
+.gamble-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  width: min(460px, 94vw);
+}
+
+/* ── Header (always visible) ── */
+.gamble-header {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.gamble-eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+}
+
+.gamble-win-row {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+}
+
+.gamble-win-block { text-align: center; }
+
+.gamble-win-label {
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 2px;
+}
+
+.gamble-win-value {
+  font-family: 'Oswald', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.gamble-win-value--current   { color: var(--gold-light); }
+.gamble-win-value--potential { color: var(--neon-green); }
+.gamble-win-value--rounds    { color: var(--neon-blue); font-size: 20px; }
+
+.gamble-win-arrow { color: var(--text-muted); font-size: 18px; padding-bottom: 14px; }
+
+/* Top collect button */
+.gamble-collect-top {
+  background: transparent;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold-dim);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 5px 16px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+}
+.gamble-collect-top:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: var(--gold-faint);
+}
+
+/* ── Divider ── */
+.gamble-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201,168,76,0.15), transparent);
+}
+
+/* ── Stages ── */
+.gamble-stage {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  animation: stageFadeIn 0.22s ease;
+}
+.gamble-stage--active { display: flex; }
+
+@keyframes stageFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════
+   STAGE 1 — Collect or Gamble?
+═══════════════════════════════════════════════ */
+.gamble-decide-question {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: var(--text-primary);
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.gamble-decide-btns {
+  display: flex;
+  gap: 16px;
+}
+
+.gamble-decide-btn {
+  width: 150px;
+  height: 64px;
+  border-radius: 4px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+  border: 2px solid transparent;
+}
+
+.gamble-decide-btn--yes {
+  background: rgba(201,168,76,0.1);
+  border-color: var(--gold-dim);
+  color: var(--gold-light);
+}
+.gamble-decide-btn--yes:hover {
+  background: rgba(201,168,76,0.2);
+  border-color: var(--gold);
+  box-shadow: 0 0 24px rgba(201,168,76,0.25);
+}
+
+.gamble-decide-btn--no {
+  background: rgba(0,0,0,0.3);
+  border-color: rgba(255,255,255,0.1);
+  color: var(--text-dim);
+}
+.gamble-decide-btn--no:hover {
+  border-color: rgba(255,255,255,0.25);
+  color: var(--text-primary);
+}
+
+.gamble-decide-btn:active { transform: scale(0.96); }
+
+/* ═══════════════════════════════════════════════
+   STAGE 2 — Mode selection cards
+═══════════════════════════════════════════════ */
+.gamble-mode-question {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.gamble-mode-cards {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.gamble-mode-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 10px;
+  background: var(--bg-panel);
+  border: 1px solid rgba(201,168,76,0.12);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  border-radius: 2px;
+}
+
+.gamble-mode-card:hover {
+  border-color: var(--gold);
+  background: rgba(201,168,76,0.07);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+.gamble-mode-card:active { transform: scale(0.97); }
+
+.gmc-symbols {
+  font-size: 28px;
+  line-height: 1;
+  display: flex;
+  gap: 4px;
+}
+
+.gmc-red   { color: #ff4455; }
+.gmc-black { color: #cccccc; }
+.gmc-up    { color: var(--neon-green); }
+.gmc-down  { color: var(--neon-red); }
+
+.gmc-name {
+  font-family: 'Oswald', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.gmc-odds {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+
+.gmc-payout {
+  font-family: 'Oswald', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gold-light);
+}
+
+.gmc-payout small {
+  font-size: 10px;
+  color: var(--neon-blue);
+}
+
+.gamble-mode-warning {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+/* ═══════════════════════════════════════════════
+   STAGE 3 — Play
+═══════════════════════════════════════════════ */
+.gamble-play-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: var(--gold-light);
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+.gamble-play-instructions {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+/* ── Playing card ── */
+.gamble-card-wrap { perspective: 700px; }
+
+.gamble-card {
+  width: 86px;
+  height: 120px;
+  position: relative;
+}
+
+.gamble-card-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.52s cubic-bezier(0.4,0,0.2,1);
+}
+
+.gamble-card-inner.flipped { transform: rotateY(180deg); }
+
+.gamble-card-back,
+.gamble-card-front {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 1px solid rgba(201,168,76,0.25);
+}
+
+.gamble-card-back {
+  background: linear-gradient(135deg, #1a1208, #0d0b07);
+  overflow: hidden;
+}
+.gamble-card-back::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(201,168,76,0.12);
+  border-radius: 4px;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(201,168,76,0.04) 0px, rgba(201,168,76,0.04) 2px,
+    transparent 2px, transparent 10px
+  );
+}
+.gamble-card-back::after {
+  content: '◆';
+  font-size: 26px;
+  color: rgba(201,168,76,0.18);
+}
+
+.gamble-card-front {
+  background: #faf8f2;
+  transform: rotateY(180deg);
+}
+
+.card-rank { font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 700; line-height: 1; }
+.card-suit { font-size: 30px; line-height: 1; }
+.card-red   { color: #cc2233; }
+.card-black { color: #111111; }
+
+/* ── Color buttons ── */
+.gamble-color-btns { display: flex; gap: 14px; }
+
+.gamble-color-btn {
+  width: 130px;
+  height: 52px;
+  border-radius: 3px;
+  border: 2px solid transparent;
+  font-family: 'Oswald', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+}
+
+.gamble-color-btn--red {
+  background: rgba(200,30,50,0.1);
+  border-color: rgba(200,30,50,0.35);
+  color: #ff4455;
+}
+.gamble-color-btn--red:hover {
+  background: rgba(200,30,50,0.2);
+  border-color: #ff4455;
+  box-shadow: 0 0 20px rgba(200,30,50,0.25);
+}
+
+.gamble-color-btn--black {
+  background: rgba(180,180,180,0.07);
+  border-color: rgba(180,180,180,0.22);
+  color: #cccccc;
+}
+.gamble-color-btn--black:hover {
+  background: rgba(180,180,180,0.14);
+  border-color: #cccccc;
+  box-shadow: 0 0 20px rgba(180,180,180,0.12);
+}
+
+.gamble-color-btn:active { transform: scale(0.96); }
+
+/* ── Suit buttons ── */
+.gamble-suit-btns { display: flex; gap: 8px; }
+
+.gamble-suit-btn {
+  width: 70px;
+  height: 70px;
+  border-radius: 3px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.03);
+  font-size: 28px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.gamble-suit-btn:nth-child(1),
+.gamble-suit-btn:nth-child(2) { color: #ff4455; }
+.gamble-suit-btn:nth-child(3),
+.gamble-suit-btn:nth-child(4) { color: #cccccc; }
+
+.gamble-suit-btn:hover {
+  border-color: currentColor;
+  background: rgba(255,255,255,0.07);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+}
+.gamble-suit-btn:active { transform: scale(0.95); }
+.gamble-suit-btn small { font-family: 'Oswald', sans-serif; font-size: 8px; letter-spacing: 1px; text-transform: uppercase; opacity: 0.5; }
+
+/* ── Hi/Lo ── */
+.gamble-hilo-section {
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.gamble-hilo-base-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 76px;
+  height: 108px;
+  border-radius: 8px;
+  border: 1px solid rgba(201,168,76,0.3);
+  background: #faf8f2;
+  gap: 4px;
+}
+
+.hilo-rank { font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 700; line-height: 1; }
+.hilo-suit { font-size: 28px; line-height: 1; }
+
+.gamble-hilo-btns { display: flex; gap: 8px; }
+
+.gamble-hilo-btn {
+  padding: 10px 16px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.1);
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+}
+.gamble-hilo-btn small { font-size: 9px; opacity: 0.65; letter-spacing: 1px; }
+.gamble-hilo-btn--higher { color: var(--neon-green); border-color: rgba(0,255,136,0.2); }
+.gamble-hilo-btn--higher:hover { background: rgba(0,255,136,0.08); border-color: var(--neon-green); }
+.gamble-hilo-btn--lower  { color: var(--neon-red);   border-color: rgba(255,34,68,0.2);   }
+.gamble-hilo-btn--lower:hover  { background: rgba(255,34,68,0.08);  border-color: var(--neon-red);   }
+.gamble-hilo-btn--same   { color: var(--neon-blue);  border-color: rgba(0,170,255,0.2);   }
+.gamble-hilo-btn--same:hover   { background: rgba(0,170,255,0.08); border-color: var(--neon-blue);  }
+.gamble-hilo-btn:active { transform: scale(0.96); }
+
+/* ═══════════════════════════════════════════════
+   STAGE 4 — Result
+═══════════════════════════════════════════════ */
+.gamble-result-icon {
+  font-size: 50px;
+  line-height: 1;
+  animation: resultPop 0.38s cubic-bezier(0.175,0.885,0.32,1.275);
+}
+@keyframes resultPop {
+  from { transform: scale(0.3); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+.gamble-result-icon--win  { color: var(--neon-green); text-shadow: 0 0 20px rgba(0,255,136,0.6); }
+.gamble-result-icon--lose { color: var(--neon-red);   text-shadow: 0 0 20px rgba(255,34,68,0.6); }
+
+.gamble-result-text {
+  font-family: 'Oswald', sans-serif;
+  font-size: 15px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.gamble-result-amount {
+  font-family: 'Playfair Display', serif;
+  font-size: 44px;
+  font-weight: 900;
+  line-height: 1;
+}
+.gamble-result-amount--win {
+  color: var(--gold-light);
+  animation: jackpotGlow 0.6s ease-in-out infinite alternate;
+}
+.gamble-result-amount--lose { color: var(--neon-red); }
+
+.gamble-result-actions { display: flex; gap: 12px; align-items: center; }
+
+.gamble-result-next {
+  background: rgba(0,255,136,0.07);
+  border: 1px solid rgba(0,255,136,0.28);
+  color: var(--neon-green);
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 9px 18px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.gamble-result-next:hover { background: rgba(0,255,136,0.13); border-color: var(--neon-green); }
+
+.gamble-result-end {
+  background: transparent;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 9px 18px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+}
+.gamble-result-end:hover { background: var(--gold-faint); border-color: var(--gold); }
+
+.gamble-result-next:active,
+.gamble-result-end:active { transform: scale(0.97); }

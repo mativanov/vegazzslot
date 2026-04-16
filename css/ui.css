@@ -1,0 +1,260 @@
+/* ============================================================
+   ui.css — Overlays, toasts, win ticker, particles
+   Neon Reels — Underground Casino
+   ============================================================ */
+
+/* ── Coin particle container ── */
+.coin-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.coin {
+  position: absolute;
+  font-size: 20px;
+  opacity: 0;
+  animation: coinFall linear forwards;
+}
+
+@keyframes coinFall {
+  0%   { opacity: 1;   transform: translateY(0)    rotate(0deg)   scale(1);   }
+  80%  { opacity: 0.8; }
+  100% { opacity: 0;   transform: translateY(700px) rotate(540deg) scale(0.4); }
+}
+
+/* ── Toast ── */
+.toast {
+  position: fixed;
+  top: 76px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-panel);
+  border: 1px solid var(--gold-dim);
+  color: var(--gold-light);
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  padding: 9px 26px;
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+  white-space: nowrap;
+}
+
+.toast--show { opacity: 1; }
+
+/* ── Big Win overlay ── */
+.bigwin-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.88);
+  z-index: 150;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+  cursor: pointer;
+}
+
+.bigwin-overlay--show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.bigwin-box { text-align: center; }
+
+.bigwin-label {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  margin-bottom: 10px;
+}
+
+.bigwin-amount {
+  font-family: 'Oswald', sans-serif;
+  font-size: 88px;
+  font-weight: 700;
+  color: var(--gold-light);
+  line-height: 1;
+  animation: jackpotGlow 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes jackpotGlow {
+  from { text-shadow: 0 0 20px var(--gold),      0 0 60px rgba(201,168,76,0.4); }
+  to   { text-shadow: 0 0 40px var(--gold-light), 0 0 100px rgba(240,208,128,0.5); }
+}
+
+.bigwin-dismiss {
+  margin-top: 18px;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+/* ── Bonus Round overlay ── */
+.bonus-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.92);
+  z-index: 160;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.bonus-overlay--show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.bonus-box {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.bonus-eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  letter-spacing: 4px;
+  color: var(--neon-blue);
+  text-shadow: 0 0 16px rgba(0,170,255,0.7);
+  animation: bonusEyebrowPulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes bonusEyebrowPulse {
+  from { opacity: 0.7; }
+  to   { opacity: 1;   text-shadow: 0 0 30px rgba(0,170,255,1); }
+}
+
+.bonus-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 56px;
+  font-weight: 900;
+  color: var(--gold-light);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 20px rgba(240,208,128,0.5),
+    0 0 60px rgba(201,168,76,0.3);
+}
+
+.bonus-spins-count {
+  font-family: 'Oswald', sans-serif;
+  font-size: 80px;
+  font-weight: 700;
+  color: var(--neon-blue);
+  line-height: 1;
+  text-shadow: 0 0 30px rgba(0,170,255,0.8);
+}
+
+.bonus-sub {
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.bonus-start-btn {
+  margin-top: 18px;
+  background: transparent;
+  border: 1px solid var(--neon-blue);
+  color: var(--neon-blue);
+  font-family: 'Oswald', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  padding: 12px 36px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+  text-transform: uppercase;
+}
+
+.bonus-start-btn:hover {
+  background: rgba(0,170,255,0.1);
+  box-shadow: 0 0 30px rgba(0,170,255,0.3);
+}
+
+.bonus-start-btn:active { transform: scale(0.97); }
+
+/* ── Win ticker ── */
+.wins-ticker {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 180px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.win-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 8px;
+  font-size: 11px;
+  border-left: 2px solid transparent;
+  transition: border-color 0.3s ease, background 0.3s ease;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0);    }
+}
+
+.we-label  { color: var(--text-dim); }
+.we-amount { font-family: 'Oswald', sans-serif; font-size: 13px; }
+
+/* Variants */
+.win-entry--jackpot {
+  border-left-color: var(--gold-light);
+  background: rgba(240,208,128,0.06);
+}
+.win-entry--jackpot .we-amount { color: var(--gold-light); }
+
+.win-entry--big {
+  border-left-color: var(--gold);
+  background: rgba(201,168,76,0.05);
+}
+.win-entry--big .we-amount { color: var(--gold); }
+
+.win-entry--small {
+  border-left-color: var(--neon-blue);
+}
+.win-entry--small .we-amount { color: var(--neon-blue); }
+
+.win-entry--return {
+  border-left-color: rgba(201,168,76,0.5);
+  background: rgba(201,168,76,0.03);
+}
+.win-entry--return .we-amount { color: var(--gold-light); }
+
+.win-entry--bonus {
+  border-left-color: var(--neon-blue);
+  background: rgba(0,170,255,0.05);
+}
+.win-entry--bonus .we-label { color: var(--neon-blue); opacity: 0.7; }
+.win-entry--bonus .we-amount { color: var(--neon-blue); }
+
+.win-entry--neutral {
+  opacity: 0.35;
+}
+.win-entry--neutral .we-amount { color: var(--text-dim); }

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vegazz Slot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Rajdhani:wght@400;500;600;700&family=Oswald:wght@300;400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="stylesheet" href="css/machine.css" />
+  <link rel="stylesheet" href="css/ui.css" />
+  <link rel="stylesheet" href="css/gamble.css" />
+</head>
+<body>
+  <div id="coin-container" class="coin-container" aria-hidden="true"></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <div id="bigwin-overlay" class="bigwin-overlay" role="dialog" aria-modal="true" aria-label="Big Win">
+    <div class="bigwin-box">
+      <div class="bigwin-label">Vegazz Win</div>
+      <div class="bigwin-amount" id="bigwin-amount">0</div>
+      <div class="bigwin-dismiss">tap to continue</div>
+    </div>
+  </div>
+
+  <div id="stats-modal" class="stats-modal" role="dialog" aria-modal="true" aria-label="Game statistics">
+    <div class="stats-modal__backdrop" id="stats-modal-backdrop"></div>
+    <div class="stats-modal__panel">
+      <div class="stats-modal__header">
+        <div>
+          <div class="stats-modal__eyebrow">Project Stats</div>
+          <div class="stats-modal__title">Vegazz Slot Statistics</div>
+        </div>
+        <button class="stats-modal__close" id="stats-modal-close" aria-label="Close statistics">×</button>
+      </div>
+
+      <div class="stats-modal__grid">
+        <section class="panel paytable" aria-label="Paytable">
+          <div class="panel-title">Paytable</div>
+
+          <div class="pay-row">
+            <div class="pay-line pay-line--gold">LINE 1 ◆</div>
+            <div class="pay-combos">
+              <div class="pay-combo"><span>2 match</span><span>0.5×</span></div>
+              <div class="pay-combo"><span>3 match</span><span>2.35×</span></div>
+              <div class="pay-combo"><span>4 match</span><span>16×</span></div>
+              <div class="pay-combo"><span>5 match</span><span>105×</span></div>
+            </div>
+          </div>
+          <div class="pay-row">
+            <div class="pay-line pay-line--blue">LINE 2 ◆</div>
+            <div class="pay-combos">
+              <div class="pay-combo"><span>3 match</span><span>1.2×</span></div>
+              <div class="pay-combo"><span>4 match</span><span>9×</span></div>
+              <div class="pay-combo"><span>5 match</span><span>55×</span></div>
+            </div>
+          </div>
+          <div class="pay-row">
+            <div class="pay-line pay-line--red">LINE 3 ◆</div>
+            <div class="pay-combos">
+              <div class="pay-combo"><span>3 match</span><span>1.2×</span></div>
+              <div class="pay-combo"><span>4 match</span><span>9×</span></div>
+              <div class="pay-combo"><span>5 match</span><span>55×</span></div>
+            </div>
+          </div>
+
+          <div class="pay-divider"></div>
+
+          <div class="pay-row pay-row--special">
+            <div class="pay-line pay-line--wild">◆ WILD</div>
+            <div class="pay-combos">
+              <div class="pay-combo"><span>Substitutes any regular symbol</span></div>
+            </div>
+          </div>
+          <div class="pay-row pay-row--special">
+            <div class="pay-line pay-line--scatter">✦ SCATTER</div>
+            <div class="pay-combos">
+              <div class="pay-combo"><span>3+ anywhere</span><span>6 Free Spins</span></div>
+            </div>
+          </div>
+
+          <div class="pay-divider"></div>
+
+          <div class="pay-row pay-row--special" style="flex-direction:column;gap:4px;">
+            <div class="pay-line pay-line--gold" style="font-size:9px;letter-spacing:1px;">SYMBOLS (high → low)</div>
+            <div class="pay-combos" style="font-size:11px;color:var(--text-dim);">
+              <div class="pay-combo"><span>7 &gt; BAR &gt; BELL &gt; MELON &gt; PLUM &gt; ORANGE &gt; LEMON &gt; CHERRY</span></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel right-panel" aria-label="Statistics">
+          <div class="panel-title">Session</div>
+          <div class="session-row"><span>Spins</span><span id="stat-spins">0</span></div>
+          <div class="session-row"><span>Paid Hits</span><span id="stat-wins">0</span></div>
+          <div class="session-row"><span>Best Return</span><span id="stat-best">0</span></div>
+          <div class="session-row"><span>Hit Rate</span><span id="stat-rate">0%</span></div>
+          <div class="session-row"><span>Net Result</span><span id="stat-net">0</span></div>
+          <div class="session-row"><span>Elapsed</span><span id="stat-elapsed">00:00</span></div>
+
+          <div class="pay-divider"></div>
+
+          <div class="panel-title">Return to Player</div>
+          <div class="rtp-meter">
+            <div class="rtp-row rtp-row--highlight">
+              <span>Session RTP</span>
+              <span id="rtp-display">—</span>
+            </div>
+            <div class="rtp-gauge"><div class="rtp-gauge-fill" id="rtp-gauge" style="width:0%"></div></div>
+            <div class="rtp-row"><span>Gauge</span><span id="rtp-bar-value">-- / 95.8%</span></div>
+            <div class="rtp-row"><span>Theoretical RTP</span><span id="theoretical-rtp">95.8%</span></div>
+            <div class="rtp-row"><span>Wagered</span><span id="total-wagered">0</span></div>
+            <div class="rtp-row"><span>Returned</span><span id="total-returned">0</span></div>
+            <div class="rtp-row"><span>Free Spin Wins</span><span id="bonus-winnings">0</span></div>
+          </div>
+
+          <div class="pay-divider"></div>
+
+          <div class="panel-title">Standards</div>
+          <div class="session-row"><span>Target RTP</span><span id="target-rtp">95.8%</span></div>
+          <div class="session-row"><span>Bonus Rate</span><span id="bonus-rate">~1 / 100</span></div>
+          <div class="session-row"><span>Volatility</span><span id="volatility-label">Medium</span></div>
+          <div class="panel-title" style="margin-top:14px;">Recent Results</div>
+          <div class="wins-ticker" id="wins-ticker" aria-live="polite">
+            <div class="win-entry win-entry--neutral">
+              <span class="we-label">Awaiting first spin…</span>
+              <span class="we-amount"></span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div id="gamble-overlay" class="gamble-overlay" role="dialog" aria-modal="true" aria-label="Gamble">
+    <div class="gamble-panel">
+      <div class="gamble-header">
+        <div class="gamble-eyebrow">Win Dupliranje</div>
+        <div class="gamble-win-row">
+          <div class="gamble-win-block">
+            <div class="gamble-win-label">Current Return</div>
+            <div class="gamble-win-value gamble-win-value--current" id="gamble-current-win">0</div>
+          </div>
+          <div class="gamble-win-arrow">→</div>
+          <div class="gamble-win-block">
+            <div class="gamble-win-label">Potential</div>
+            <div class="gamble-win-value gamble-win-value--potential" id="gamble-potential">0</div>
+          </div>
+          <div class="gamble-win-block">
+            <div class="gamble-win-label">Rounds Left</div>
+            <div class="gamble-win-value gamble-win-value--rounds" id="gamble-rounds-left">5</div>
+          </div>
+        </div>
+        <button class="gamble-collect-top" id="gamble-collect-top">Collect</button>
+      </div>
+
+      <div class="gamble-divider"></div>
+
+      <div class="gamble-stage gamble-stage--active" id="gamble-stage-decide">
+        <div class="gamble-decide-question">Do you want to double your win?</div>
+        <div class="gamble-decide-btns">
+          <button class="gamble-decide-btn gamble-decide-btn--yes" id="gamble-btn-yes">Double</button>
+          <button class="gamble-decide-btn gamble-decide-btn--no" id="gamble-btn-collect">Collect</button>
+        </div>
+      </div>
+
+      <div class="gamble-stage" id="gamble-stage-mode">
+        <div class="gamble-mode-question">Choose your dupliranje type</div>
+        <div class="gamble-mode-cards">
+          <button class="gamble-mode-card" data-mode="color">
+            <div class="gmc-symbols"><span class="gmc-red">♥</span><span class="gmc-black">♠</span></div>
+            <div class="gmc-name">Color</div>
+            <div class="gmc-odds">50% chance</div>
+            <div class="gmc-payout">Win × 2</div>
+          </button>
+
+          <button class="gamble-mode-card" data-mode="suit">
+            <div class="gmc-symbols"><span class="gmc-red">♦</span><span class="gmc-black">♣</span></div>
+            <div class="gmc-name">Suit</div>
+            <div class="gmc-odds">25% chance</div>
+            <div class="gmc-payout">Win × 4</div>
+          </button>
+
+          <button class="gamble-mode-card" data-mode="hilo">
+            <div class="gmc-symbols"><span class="gmc-up">▲</span><span class="gmc-down">▼</span></div>
+            <div class="gmc-name">Hi / Lo</div>
+            <div class="gmc-odds">~46% chance</div>
+            <div class="gmc-payout">Win × 2 <small>(same=×8)</small></div>
+          </button>
+        </div>
+        <div class="gamble-mode-warning">Mode stays locked for the current gamble session</div>
+      </div>
+
+      <div class="gamble-stage" id="gamble-stage-play">
+        <div class="gamble-play-title" id="gamble-play-title">Pick a Color</div>
+        <div class="gamble-play-instructions" id="gamble-play-instructions"></div>
+
+        <div class="gamble-card-wrap">
+          <div class="gamble-card">
+            <div class="gamble-card-inner">
+              <div class="gamble-card-back"></div>
+              <div class="gamble-card-front" id="gamble-card-front"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="gamble-color-btns" id="gamble-color-btns">
+          <button class="gamble-color-btn gamble-color-btn--red" data-color="red">♥ Red</button>
+          <button class="gamble-color-btn gamble-color-btn--black" data-color="black">♠ Black</button>
+        </div>
+
+        <div class="gamble-suit-btns" id="gamble-suit-btns" style="display:none">
+          <button class="gamble-suit-btn" data-suit="hearts">♥<small>Hearts</small></button>
+          <button class="gamble-suit-btn" data-suit="diamonds">♦<small>Diamonds</small></button>
+          <button class="gamble-suit-btn" data-suit="spades">♠<small>Spades</small></button>
+          <button class="gamble-suit-btn" data-suit="clubs">♣<small>Clubs</small></button>
+        </div>
+
+        <div class="gamble-hilo-section" id="gamble-hilo-section" style="display:none">
+          <div class="gamble-hilo-base-card">
+            <span class="hilo-rank" id="hilo-base-rank">-</span>
+            <span class="hilo-suit" id="hilo-base-suit">-</span>
+          </div>
+          <div class="gamble-hilo-btns">
+            <button class="gamble-hilo-btn gamble-hilo-btn--higher" data-hilo="higher">▲ Higher</button>
+            <button class="gamble-hilo-btn gamble-hilo-btn--same" data-hilo="same">= Same <small>×8</small></button>
+            <button class="gamble-hilo-btn gamble-hilo-btn--lower" data-hilo="lower">▼ Lower</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="gamble-stage" id="gamble-stage-result">
+        <div class="gamble-card-wrap">
+          <div class="gamble-card">
+            <div class="gamble-card-inner">
+              <div class="gamble-card-back"></div>
+              <div class="gamble-card-front" id="gamble-card-front-result"></div>
+            </div>
+          </div>
+        </div>
+        <div class="gamble-result-icon" id="gamble-result-icon">✓</div>
+        <div class="gamble-result-text" id="gamble-result-text"></div>
+        <div class="gamble-result-amount" id="gamble-result-amount"></div>
+        <div class="gamble-result-actions">
+          <button class="gamble-result-next" id="gamble-result-next">Gamble Again</button>
+          <button class="gamble-result-end" id="gamble-result-end">Collect</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="bonus-overlay" class="bonus-overlay" role="dialog" aria-modal="true" aria-label="Bonus Round">
+    <div class="bonus-box">
+      <div class="bonus-eyebrow">Vegazz Bonus Triggered</div>
+      <div class="bonus-title">FREE SPINS</div>
+      <div class="bonus-spins-count" id="bonus-spins-count">6</div>
+      <div class="bonus-sub">bonus rounds awarded</div>
+      <button class="bonus-start-btn" id="bonus-start-btn">START BONUS</button>
+    </div>
+  </div>
+
+  <div class="wrapper">
+    <header class="site-header">
+      <div class="logo">Vegazz <span class="logo-accent">Slot</span></div>
+
+      <div class="header-stats">
+        <div class="stat-block">
+          <div class="stat-label">Credits</div>
+          <div class="stat-value" id="txt-money">0</div>
+        </div>
+        <div class="stat-block" id="el-win" aria-live="polite">
+          <div class="stat-label">Return</div>
+          <div class="stat-value stat-value--win" id="txt-win">0</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-label">Stake</div>
+          <div class="stat-value" id="txt-bet">1</div>
+        </div>
+        <div class="stat-block" id="el-free-spins">
+          <div class="stat-label">Bonus Spins</div>
+          <div class="stat-value stat-value--bonus" id="txt-free-spins">0</div>
+        </div>
+      </div>
+
+      <button class="btn-deposit" id="btn-putmoney">Load Credits</button>
+      <div class="header-actions">
+        <button class="btn-icon" id="btn-sound" title="Toggle sound" aria-label="Toggle sound">🔊</button>
+        <button class="btn-icon" id="btn-stats" title="Open statistics" aria-label="Open statistics">📊</button>
+      </div>
+    </header>
+
+    <div class="slot-stage">
+      <main class="machine-wrap" role="main">
+        <div class="machine" id="machine">
+          <div class="machine-header">◆ &nbsp; V E G A Z Z &nbsp; S L O T &nbsp; ◆</div>
+          <div class="machine-marquee">Classic fruit cabinet reimagined with premium pacing</div>
+
+          <div class="win-banner" id="win-banner" aria-live="assertive"></div>
+
+          <div class="bonus-mode-bar" id="bonus-mode-bar">
+            <span>FREE SPINS MODE</span>
+            <span id="bonus-mode-remaining"></span>
+          </div>
+
+          <div class="game-area-wrap">
+            <div class="payline-bar payline-bar--1" data-label="1"><div class="bar-line"></div></div>
+            <div class="payline-bar payline-bar--2" data-label="2"><div class="bar-line"></div></div>
+            <div class="payline-bar payline-bar--3" data-label="3"><div class="bar-line"></div></div>
+
+            <div id="game-area" class="game-area" role="img" aria-label="Slot machine reels">
+              <div class="empty-overlay" id="empty-overlay">
+                <p>VEGAZZ SLOT</p>
+                <small>load credits to begin</small>
+              </div>
+              <div class="c-column"><div class="column" id="col-0"></div></div>
+              <div class="c-column"><div class="column" id="col-1"></div></div>
+              <div class="c-column"><div class="column" id="col-2"></div></div>
+              <div class="c-column"><div class="column" id="col-3"></div></div>
+              <div class="c-column"><div class="column" id="col-4"></div></div>
+            </div>
+          </div>
+
+          <div class="controls">
+            <div class="control-group control-group--left">
+              <div class="control-label">Stake</div>
+              <div class="bet-chips" id="bet-chips" role="radiogroup" aria-label="Bet amount">
+                <button class="chip chip--active" data-bet="1" role="radio" aria-checked="true">1</button>
+                <button class="chip" data-bet="5" role="radio" aria-checked="false">5</button>
+                <button class="chip" data-bet="10" role="radio" aria-checked="false">10</button>
+                <button class="chip" data-bet="25" role="radio" aria-checked="false">25</button>
+                <button class="chip" data-bet="50" role="radio" aria-checked="false">50</button>
+                <button class="chip" data-bet="100" role="radio" aria-checked="false">100</button>
+              </div>
+            </div>
+
+            <div class="control-group control-group--center">
+              <button id="btn-spin" class="btn-spin" disabled aria-label="Spin reels">
+                <span class="btn-spin-text">SPIN</span>
+              </button>
+            </div>
+
+            <div class="control-group control-group--rules">
+              <div class="control-label">How To Play</div>
+              <div class="rules-box">
+                <div class="rules-symbols">
+                  <div class="rule-symbol rule-symbol--wild"><span>◆</span><small>Wild</small></div>
+                  <div class="rule-symbol rule-symbol--scatter"><span>✦</span><small>Scatter</small></div>
+                  <div class="rule-symbol rule-symbol--bar"><span>BAR</span><small>Bar</small></div>
+                  <div class="rule-symbol rule-symbol--seven"><span>7</span><small>Top</small></div>
+                </div>
+                <div class="rule-line"><span>1.</span><span>Load credits and choose stake.</span></div>
+                <div class="rule-line"><span>2.</span><span>3 fixed lines pay from left to right.</span></div>
+                <div class="rule-line"><span>3.</span><span>3 scatters trigger 6 free spins.</span></div>
+                <div class="rule-line"><span>4.</span><span>After a win you can use dupliranje to double it.</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/reels.js"></script>
+  <script src="js/paylines.js"></script>
+  <script src="js/bonus.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/gamble.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
