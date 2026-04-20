@@ -23,6 +23,7 @@ const Game = (() => {
     bonusReturned: 0,
 
     pendingBonus: false,
+    gambleActive: false,
   };
   let spinFailsafeTimer = null;
 
@@ -136,13 +137,14 @@ const Game = (() => {
 
   function handleRuntimeError(error) {
     console.error(error);
+    state.gambleActive = false;
     releaseSpinLock(false);
     UI.hideBigWin();
     UI.toast('Unexpected error. Spin unlocked.');
   }
 
   function triggerSpin() {
-    if (!state.started || state.spinning) return;
+    if (!state.started || state.spinning || state.gambleActive) return;
 
     const isFreeSpin = Bonus.isActive();
     if (!isFreeSpin) {
@@ -281,27 +283,34 @@ const Game = (() => {
       if (!Bonus.isActive()) {
         const delayBeforeGamble = betMult >= Config.WIN_TIER.JACKPOT ? 1800 : 1400;
         setTimeout(() => {
-          UI.hideBigWin();
-          state.money = Number((state.money - totalPayout).toFixed(2));
-          state.totalReturned = Number((state.totalReturned - totalPayout).toFixed(2));
-          UI.updateMoney(state.money, state.bet);
-
-          Gamble.offer(totalPayout, (finalWin) => {
-            state.money = Number((state.money + finalWin).toFixed(2));
-            state.totalReturned = Number((state.totalReturned + finalWin).toFixed(2));
-            if (finalWin > state.bestWin) state.bestWin = finalWin;
+          try {
+            UI.hideBigWin();
+            clearSpinFailsafe();
+            state.gambleActive = true;
+            state.money = Number((state.money - totalPayout).toFixed(2));
+            state.totalReturned = Number((state.totalReturned - totalPayout).toFixed(2));
             UI.updateMoney(state.money, state.bet);
-            UI.updateStats(buildStatsPayload());
 
-            if (finalWin > totalPayout) {
-              UI.toast(`Dupliranje won: +${UI.formatCredits(finalWin)}`);
-              UI.spawnCoins(Math.min(Math.floor(finalWin / state.bet), 30));
-            } else if (finalWin === 0) {
-              UI.toast('Dupliranje lost');
-            }
+            Gamble.offer(totalPayout, (finalWin) => {
+              state.gambleActive = false;
+              state.money = Number((state.money + finalWin).toFixed(2));
+              state.totalReturned = Number((state.totalReturned + finalWin).toFixed(2));
+              if (finalWin > state.bestWin) state.bestWin = finalWin;
+              UI.updateMoney(state.money, state.bet);
+              UI.updateStats(buildStatsPayload());
 
-            resolveAfterSpin(result);
-          }, !state.soundEnabled);
+              if (finalWin > totalPayout) {
+                UI.toast(`Gamble won: +${UI.formatCredits(finalWin)}`);
+                UI.spawnCoins(Math.min(Math.floor(finalWin / state.bet), 30));
+              } else if (finalWin === 0) {
+                UI.toast('Gamble lost');
+              }
+
+              resolveAfterSpin(result);
+            }, !state.soundEnabled);
+          } catch (error) {
+            handleRuntimeError(error);
+          }
         }, delayBeforeGamble);
         return;
       }

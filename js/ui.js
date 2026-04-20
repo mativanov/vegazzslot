@@ -53,10 +53,11 @@ const UI = (() => {
   }
 
   function formatCredits(value) {
-    return Number(value || 0).toLocaleString(undefined, {
+    const amount = Number(value || 0).toLocaleString(undefined, {
       minimumFractionDigits: Number.isInteger(Number(value || 0)) ? 0 : 2,
       maximumFractionDigits: 2,
     });
+    return `$${amount}`;
   }
 
   function formatSignedCredits(value) {

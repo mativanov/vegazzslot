@@ -9,10 +9,10 @@ const Gamble = (() => {
   const RESOLVE_DELAY_MS = 650;
 
   const SUITS = [
-    { id: 'hearts', emoji: '♥', color: 'red' },
-    { id: 'diamonds', emoji: '♦', color: 'red' },
-    { id: 'spades', emoji: '♠', color: 'black' },
-    { id: 'clubs', emoji: '♣', color: 'black' },
+    { id: 'hearts', emoji: '\u2665', color: 'red' },
+    { id: 'diamonds', emoji: '\u2666', color: 'red' },
+    { id: 'spades', emoji: '\u2660', color: 'black' },
+    { id: 'clubs', emoji: '\u2663', color: 'black' },
   ];
 
   const RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
@@ -32,6 +32,8 @@ const Gamble = (() => {
   let overlay;
   let cardFront;
   let cardInner;
+  let resultCardFront;
+  let resultCardInner;
   let txtCurrentWin;
   let txtPotential;
   let txtRoundsLeft;
@@ -76,14 +78,26 @@ const Gamble = (() => {
       `<span class="card-suit ${colorClass}">${suit.emoji}</span>`;
   }
 
+  function formatMoney(value) {
+    const amount = Number(value || 0).toLocaleString(undefined, {
+      minimumFractionDigits: Number.isInteger(Number(value || 0)) ? 0 : 2,
+      maximumFractionDigits: 2,
+    });
+    return `$${amount}`;
+  }
+
   function flipReveal(rank, suit) {
     renderCardEl(cardFront, rank, suit);
+    renderCardEl(resultCardFront, rank, suit);
     cardInner.classList.add('flipped');
+    resultCardInner.classList.add('flipped');
   }
 
   function resetCard() {
     cardInner.classList.remove('flipped');
+    resultCardInner.classList.remove('flipped');
     cardFront.innerHTML = '';
+    resultCardFront.innerHTML = '';
   }
 
   function clearRoundTimer() {
@@ -95,10 +109,12 @@ const Gamble = (() => {
 
   function lockInteraction() {
     interactionLocked = true;
+    overlay.classList.add('gamble-overlay--busy');
   }
 
   function unlockInteraction() {
     interactionLocked = false;
+    overlay.classList.remove('gamble-overlay--busy');
   }
 
   function canInteract() {
@@ -123,12 +139,12 @@ const Gamble = (() => {
   }
 
   function updateDisplay() {
-    txtCurrentWin.textContent = pendingWin.toLocaleString();
+    txtCurrentWin.textContent = formatMoney(pendingWin);
     txtRoundsLeft.textContent = roundsLeft;
 
     const multiplierByMode = { color: 2, suit: 4, hilo: 2 };
     const multiplier = lockedMode ? multiplierByMode[lockedMode] : 2;
-    txtPotential.textContent = (pendingWin * multiplier).toLocaleString();
+    txtPotential.textContent = formatMoney(pendingWin * multiplier);
   }
 
   function dealHiloBase() {
@@ -149,9 +165,9 @@ const Gamble = (() => {
     updateDisplay();
 
     const labels = {
-      color: { title: 'Pick a Color', sub: 'Correct -> 2x win | Wrong -> lose all' },
-      suit: { title: 'Pick a Suit', sub: 'Correct -> 4x win | Wrong -> lose all' },
-      hilo: { title: 'Higher or Lower?', sub: 'Correct -> 2x | Same -> 8x | Wrong -> lose all' },
+      color: { title: 'Pick a Color', sub: 'Correct choice pays x2. Wrong choice loses the current win.' },
+      suit: { title: 'Pick a Suit', sub: 'Call the exact suit to win x4. Any miss ends the gamble.' },
+      hilo: { title: 'Higher or Lower?', sub: 'Higher or lower pays x2. Exact same rank pays x8.' },
     };
 
     playTitle.textContent = labels[mode].title;
@@ -163,6 +179,8 @@ const Gamble = (() => {
 
     if (mode === 'hilo') {
       dealHiloBase();
+    } else {
+      resetCard();
     }
 
     showStage('play');
@@ -178,10 +196,10 @@ const Gamble = (() => {
       sfx(() => Audio.playError());
     }
 
-    resultIcon.textContent = won ? '✓' : '✗';
+    resultIcon.textContent = won ? '\u2713' : '\u2715';
     resultIcon.className = `gamble-result-icon ${won ? 'gamble-result-icon--win' : 'gamble-result-icon--lose'}`;
     resultText.textContent = message;
-    resultAmount.textContent = won ? `+${pendingWin.toLocaleString()}` : 'WIN LOST';
+    resultAmount.textContent = won ? `+${formatMoney(pendingWin)}` : 'WIN LOST';
     resultAmount.className = `gamble-result-amount ${won ? 'gamble-result-amount--win' : 'gamble-result-amount--lose'}`;
 
     const modeLabels = { color: 'Color', suit: 'Suit', hilo: 'Hi/Lo' };
@@ -260,7 +278,7 @@ const Gamble = (() => {
             suit.color === guess,
             2,
             suit.color === guess
-              ? `${suit.emoji} ${rank} - Correct! Win doubled!`
+              ? `${suit.emoji} ${rank} - Correct color. Win doubled.`
               : `${suit.emoji} ${rank} - Wrong color. Win lost.`
           );
         });
@@ -282,7 +300,7 @@ const Gamble = (() => {
             suit.id === guess,
             4,
             suit.id === guess
-              ? `${suit.emoji} ${rank} - Perfect! Win x4!`
+              ? `${suit.emoji} ${rank} - Perfect call. Win x4.`
               : `${suit.emoji} ${rank} - Wrong suit. Win lost.`
           );
         });
@@ -311,8 +329,8 @@ const Gamble = (() => {
           const multiplier = guess === 'same' ? 8 : 2;
           const message = won
             ? guess === 'same'
-              ? `${newSuit.emoji} ${newRank} - Exact match! x8!`
-              : `${newSuit.emoji} ${newRank} - Correct! Win doubled!`
+              ? `${newSuit.emoji} ${newRank} - Exact match. Win x8.`
+              : `${newSuit.emoji} ${newRank} - Correct call. Win doubled.`
             : `${newSuit.emoji} ${newRank} - Wrong. Win lost.`;
 
           resolveGuess(won, multiplier, message);
@@ -353,6 +371,8 @@ const Gamble = (() => {
       overlay = document.getElementById('gamble-overlay');
       cardFront = document.getElementById('gamble-card-front');
       cardInner = document.querySelector('#gamble-stage-play .gamble-card-inner');
+      resultCardFront = document.getElementById('gamble-card-front-result');
+      resultCardInner = document.querySelector('#gamble-stage-result .gamble-card-inner');
       txtCurrentWin = document.getElementById('gamble-current-win');
       txtPotential = document.getElementById('gamble-potential');
       txtRoundsLeft = document.getElementById('gamble-rounds-left');
